@@ -1,0 +1,6 @@
+@MyCryptoTracker_HostAddress = http://localhost:5206
+
+GET {{MyCryptoTracker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
