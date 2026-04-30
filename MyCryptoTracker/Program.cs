@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyCryptoTracker.Data;
 using MyCryptoTracker.Repositories;
+using MyCryptoTracker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ICryptoService, CryptoService>();
 
 // SQLite 
 builder.Services.AddDbContext<AppDbContext>(options =>
