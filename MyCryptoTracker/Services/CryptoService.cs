@@ -6,7 +6,7 @@ public class CryptoService : ICryptoService
 {
     private readonly IHttpClientFactory _httpClientFactory;
 
-    // CoinGecko semboller yerine id'ler kullanır (btc -> bitcoin)
+    // CoinGecko uses IDs instead of symbols (btc -> bitcoin)
     private readonly Dictionary<string, string> _symbolMap = new()
     {
         { "BTC", "bitcoin" },
@@ -22,15 +22,24 @@ public class CryptoService : ICryptoService
     public async Task<decimal?> GetPriceInUsdAsync(string symbol)
     {
         var client = _httpClientFactory.CreateClient();
-        var coinId = _symbolMap.GetValueOrDefault(symbol.ToUpper());
 
+        // critical: coingecko not allowing requests without user-agent
+        client.DefaultRequestHeaders.Add("User-Agent", "MyCryptoTrackerApp/1.0");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+        var coinId = _symbolMap.GetValueOrDefault(symbol.ToUpper());
         if (string.IsNullOrEmpty(coinId)) return null;
 
         try
         {
             var response = await client.GetAsync($"https://api.coingecko.com/api/v3/simple/price?ids={coinId}&vs_currencies=usd");
 
-            if (!response.IsSuccessStatusCode) return null;
+            // Hata durumunu loglayalım ki terminalde görebilesin
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"API Error: {response.StatusCode}");
+                return null;
+            }
 
             var json = await response.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(json);
@@ -40,7 +49,10 @@ public class CryptoService : ICryptoService
                 return coinData.GetProperty("usd").GetDecimal();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
 
         return null;
     }

@@ -10,6 +10,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICryptoService, CryptoService>();
+builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 
 // SQLite 
 builder.Services.AddDbContext<AppDbContext>(options =>
