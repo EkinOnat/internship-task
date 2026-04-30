@@ -18,6 +18,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Repository 
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
+// CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy.WithOrigins("http://localhost:5173", "http://localhost:3000") // React portun hangisiyse
+                         .AllowAnyMethod()
+                         .AllowAnyHeader());
+});
 
 var app = builder.Build();
 
@@ -27,8 +35,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
+}
+app.UseCors("AllowReactApp");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
