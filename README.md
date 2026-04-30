@@ -89,10 +89,3 @@ npm run dev
 API Documentation
 Once the backend is running, the interactive Swagger/OpenAPI documentation is available at:
 http://localhost:5206/swagger/index.html
-
-````
-
-```
-
-```
-````
