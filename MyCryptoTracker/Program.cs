@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ICryptoService, CryptoService>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 

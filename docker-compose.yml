@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  backend-api:
+    build:
+      context: ./MyCryptoTracker
+      dockerfile: Dockerfile
+    ports:
+      - "5206:8080" 
+    volumes:
+      - ./MyCryptoTracker/app.db:/app/app.db 
+
+  frontend-ui:
+    build:
+      context: ./my-crypto-ui
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80" 
+    depends_on:
+      - backend-api
