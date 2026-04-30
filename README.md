@@ -68,19 +68,25 @@ Frontend: http://localhost:5173
 
 Backend Swagger: http://localhost:5206/swagger
 
-3. Manual Installation
-   Backend:
-   cd MyCryptoTracker
-   dotnet restore
-   dotnet run
-   Frontend:
-   cd my-crypto-ui
-   npm install
-   npm run dev
+### 3. Manual Installation
+
+#### Backend
+
+````bash
+cd MyCryptoTracker
+dotnet restore
+dotnet run
+### Frontend
+```bash
+cd my-crypto-ui
+npm install
+npm run dev
 
 API Documentation
 Once the backend is running, the interactive Swagger/OpenAPI documentation is available at:
 http://localhost:5206/swagger/index.html
+
+````
 
 ```
 
