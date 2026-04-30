@@ -26,31 +26,35 @@ public class AnalyticsController : ControllerBase
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary()
     {
-        var assets = await _repository.GetAllAsync();
-        var summary = new PortfolioSummaryDto();
-        double totalPurchaseCost = 0;
+var assets = await _repository.GetAllAsync();
+    
+    // 1. get unique symbols 
+    var uniqueSymbols = assets.Select(a => a.Symbol).Distinct();
 
-        foreach (var asset in assets)
+    // 2. get prices
+    var prices = await _cryptoService.GetPricesInUsdAsync(uniqueSymbols);
+
+    var summary = new PortfolioSummaryDto();
+    double totalPurchaseCost = 0;
+
+    foreach (var asset in assets)
+    {
+        if (prices.TryGetValue(asset.Symbol.ToUpper(), out var currentPrice))
         {
-            var currentPrice = await _cryptoService.GetPriceInUsdAsync(asset.Symbol);
+            var price = (double)currentPrice;
+            var profitLoss = _portfolioService.CalculateProfitLoss(asset.Amount, asset.PurchasePrice, price);
+            
+            summary.TotalValueUsd += asset.Amount * price;
+            summary.TotalProfitLossUsd += profitLoss;
+            totalPurchaseCost += asset.Amount * asset.PurchasePrice;
 
-            if (currentPrice.HasValue)
-            {
-                var price = (double)currentPrice.Value;
-                var profitLoss = _portfolioService.CalculateProfitLoss(asset.Amount, asset.PurchasePrice, price);
-
-                summary.TotalValueUsd += asset.Amount * price;
-                summary.TotalProfitLossUsd += profitLoss;
-                totalPurchaseCost += asset.Amount * asset.PurchasePrice;
-
-                summary.AssetPerformances.Add(new AssetPerformanceDto
-                {
-                    Symbol = asset.Symbol,
-                    CurrentPrice = price,
-                    ProfitLoss = profitLoss
-                });
-            }
+            summary.AssetPerformances.Add(new AssetPerformanceDto {
+                Symbol = asset.Symbol,
+                CurrentPrice = price,
+                ProfitLoss = profitLoss
+            });
         }
+    }
 
         if (totalPurchaseCost > 0)
         {

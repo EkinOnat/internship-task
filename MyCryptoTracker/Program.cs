@@ -22,7 +22,7 @@ builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        policy => policy.WithOrigins("http://localhost:5173", "http://localhost:3000") // React portun hangisiyse
+        policy => policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
                          .AllowAnyMethod()
                          .AllowAnyHeader());
 });
